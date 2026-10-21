@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f8f7f3">
+    <meta name="description" content="XR Teleoperate — G1、H1、H2、R1 机器人遥操作工作台">
+    <title>XR Teleoperate · 遥操作工作台</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%23c57053'/%3E%3Cpath d='M11 12l18 16M29 12L11 28M20 8v24M8 20h24' stroke='%23fff8ed' stroke-width='3'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></symbol>
+      <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 .5c0 1.5-2.5 2-2.5 3.5m0 3h.01"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+      <symbol id="i-cube" viewBox="0 0 24 24"><path d="m12 3 9 5v8l-9 5-9-5V8l9-5Zm0 9 9-4M3 8l9 4v9"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+      <symbol id="i-spark" viewBox="0 0 40 40"><path d="m20 3 1 12 9-8-6 11 13-1-12 5 9 9-12-6-2 13-3-13-10 7 7-11-12-3 13-1-6-10 10 8Z" fill="currentColor" stroke="none"/></symbol>
+    </svg>
+
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="./index.html" aria-label="XR Teleoperate 首页">
+        <span class="brand-mark"><svg><use href="#i-spark"/></svg></span>
+        <span>Teleoperate<span class="brand-caption">A little closer to the real world.</span></span>
+      </a>
+      <div class="workspace-switch">
+        <span class="workspace-avatar">XR</span>
+        <span><strong>我的工作空间</strong><small>机器人遥操作</small></span>
+        <span class="workspace-dot" title="前端展示模式"></span>
+      </div>
+      <div class="nav-label">工作台</div>
+      <nav aria-label="主导航">
+        <button class="nav-item active" id="nav-robots" aria-current="page"><svg class="icon"><use href="#i-grid"/></svg>机器人<span class="nav-count">4</span></button>
+        <button class="nav-item" id="nav-guide"><svg class="icon"><use href="#i-help"/></svg>使用指南<svg class="icon nav-end"><use href="#i-chevron"/></svg></button>
+      </nav>
+      <div class="recent-heading nav-label">最近选择<span>↗</span></div>
+      <div id="recent-list" class="recent-list"><p class="recent-empty">你的选择会出现在这里</p></div>
+      <div class="sidebar-bottom">
+        <div class="sidebar-note"><svg><use href="#i-spark"/></svg><p>让灵感成为动作。<span>从选择一台机器人开始。</span></p></div>
+        <div class="profile"><span class="profile-avatar">U</span><span><strong>本地工作空间</strong><small>XR Teleoperate</small></span><span class="profile-mode">预览</span></div>
+      </div>
+    </aside>
+    <button class="sidebar-backdrop" id="sidebar-backdrop" aria-label="关闭导航" hidden></button>
+
+    <div class="page">
+      <header class="topbar">
+        <div class="breadcrumb">
+          <button class="icon-button menu-toggle" id="menu-toggle" aria-label="打开导航" aria-expanded="false" aria-controls="sidebar"><svg class="icon"><use href="#i-menu"/></svg></button>
+          <span>工作空间</span><svg class="icon"><use href="#i-chevron"/></svg><strong>机器人</strong>
+        </div>
+        <div class="preview-label"><span></span>入口展示模式</div>
+      </header>
+      <main>
+        <section class="hero" aria-labelledby="page-title">
+          <div class="eyebrow"><svg><use href="#i-spark"/></svg>YOUR MOTION, THEIR POSSIBILITY</div>
+          <h1 id="page-title">让你的动作，<br class="mobile-break">延伸到远方。</h1>
+          <p>选择你的机器人，开启更自然的遥操作体验。</p>
+          <div class="hero-meta"><span><svg class="icon"><use href="#i-cube"/></svg>4 个机器人系列</span><span class="meta-separator"></span><span>7 种型号 · 一个工作空间</span></div>
+          <div class="hero-decoration" aria-hidden="true"><div></div><div></div><span>人 × 机器 × 可能性</span></div>
+        </section>
+
+        <section class="robots-section" aria-labelledby="robots-title">
+          <div class="section-header">
+            <div class="section-heading"><h2 id="robots-title">选择机器人</h2><span id="result-count">04</span></div>
+            <label class="search-box"><svg class="icon"><use href="#i-search"/></svg><input id="search" type="search" placeholder="搜索机器人…" aria-label="搜索机器人" autocomplete="off"><kbd aria-hidden="true">/</kbd></label>
+          </div>
+          <div class="robot-grid" id="robot-grid"></div>
+          <div class="empty-state" id="empty-state" hidden><svg class="icon"><use href="#i-search"/></svg><h3>暂时没有找到这个机器人</h3><p>试试 G1、H1、H2 或 R1。</p><button class="text-button" id="clear-search">清除搜索</button></div>
+        </section>
+
+        <section class="getting-started" aria-label="使用提示">
+          <span class="guide-icon"><svg class="icon"><use href="#i-spark"/></svg></span>
+          <div><h2>第一次使用遥操作？</h2><p>从选择型号开始，了解你的工作空间。</p></div>
+          <button class="text-button" id="open-guide">查看入门指南<svg class="icon"><use href="#i-arrow"/></svg></button>
+        </section>
+        <footer class="page-footer"><span>Designed for a more human connection.</span><span>XR TELEOPERATE <span class="footer-dot">·</span> LOCAL WORKSPACE</span></footer>
+      </main>
+    </div>
+
+    <dialog id="robot-dialog" aria-labelledby="dialog-title">
+      <button class="icon-button dialog-close" data-close aria-label="关闭"><svg class="icon"><use href="#i-close"/></svg></button>
+      <div class="dialog-eyebrow">ROBOT WORKSPACE</div>
+      <div class="dialog-robot" id="dialog-robot" aria-hidden="true"></div>
+      <h2 id="dialog-title"></h2>
+      <p class="dialog-description" id="dialog-description"></p>
+      <label class="field-label" for="model-select">选择机器人型号</label>
+      <select id="model-select"></select>
+      <div class="preview-note"><svg class="icon"><use href="#i-cube"/></svg><p>这里是你的遥操入口。<span>当前为前端展示，尚未接入机器人或启动脚本。</span></p></div>
+      <button class="primary-button confirm-selection" id="confirm-selection">选择此机器人<svg class="icon"><use href="#i-arrow"/></svg></button>
+    </dialog>
+
+    <dialog id="guide-dialog" aria-labelledby="guide-title">
+      <button class="icon-button dialog-close" data-close aria-label="关闭"><svg class="icon"><use href="#i-close"/></svg></button>
+      <div class="dialog-eyebrow">A SMALL GUIDE</div>
+      <svg class="guide-spark"><use href="#i-spark"/></svg>
+      <h2 id="guide-title">从这里开始。</h2>
+      <p class="dialog-description">你的机器人工作空间，简单三步。</p>
+      <ol class="guide-steps"><li><span>01</span><div><h3>找到你的机器人</h3><p>浏览 G1、H1、H2、R1 四个系列，也可以按 <kbd>/</kbd> 快速搜索。</p></div></li><li><span>02</span><div><h3>选择对应型号</h3><p>点击「进入遥操」，在入口面板中选择机器人型号。</p></div></li><li><span>03</span><div><h3>留在你的工作空间</h3><p>已选型号会标记在卡片上，最近选择保存在当前浏览器中。</p></div></li></ol>
+      <p class="guide-footnote">本页面为界面预览，点击入口不会连接硬件或运行命令。</p>
+      <button class="primary-button" data-close>开始探索<svg class="icon"><use href="#i-arrow"/></svg></button>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
