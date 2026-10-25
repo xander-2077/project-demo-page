@@ -8,10 +8,10 @@ const robots = [
     variants: [{ value: "G1_29", label: "G1 · 29 自由度" }, { value: "G1_23", label: "G1 · 23 自由度" }],
   },
   {
-    id: "h1", name: "H1", subtitle: "舒展双臂，探索边界",
-    description: "以更舒展的动作，将你的意图延伸到真实空间。",
-    tags: ["双臂遥操", "多型号"], accent: "#8a977c", tint: "#eef0e8",
-    variants: [{ value: "H1_2", label: "H1-2 · 手臂 7 自由度" }, { value: "H1", label: "H1 · 手臂 4 自由度" }],
+    id: "b2", name: "B2 + Z1", subtitle: "四足机动，Z1 机械臂",
+    description: "在四足平台上延伸机械臂，把动作带到更远的位置。",
+    tags: ["四足遥操", "机械臂"], accent: "#8a977c", tint: "#e7ebe3",
+    variants: [{ value: "B2_Z1", label: "B2 · Z1 机械臂" }],
   },
   {
     id: "h2", name: "H2", subtitle: "从容协作，感知更多",
@@ -30,22 +30,68 @@ const robots = [
 const icon = (name, className = "icon") => `<svg class="${className}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
 
 // These illustrations are intentionally stylized vectors, not technical models.
+function b2Illustration(key, light, shade, joint, accent) {
+  return `<svg viewBox="-4 -20 214 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <linearGradient id="${key}-shell" x1="0" x2="1" y1="0" y2=".7"><stop stop-color="${light}"/><stop offset=".55" stop-color="${light}"/><stop offset="1" stop-color="${shade}"/></linearGradient>
+      <linearGradient id="${key}-metal" x1="0" x2="1"><stop stop-color="${joint}"/><stop offset=".45" stop-color="#656c69"/><stop offset="1" stop-color="${joint}"/></linearGradient>
+    </defs>
+    <ellipse cx="104" cy="206" rx="62" ry="7" fill="#776d5c" opacity=".09"/>
+    <g stroke="#625f55" stroke-width=".65" stroke-linejoin="round">
+      <circle cx="132" cy="146" r="6" fill="url(#${key}-metal)"/>
+      <path d="M126 148 140 152 134 174 118 170Z" fill="${shade}"/>
+      <circle cx="126" cy="174" r="5.5" fill="${joint}"/>
+      <path d="M120 176 134 180 128 200 112 196Z" fill="${shade}"/>
+      <path d="M110 198 130 202 132 208 106 204Z" fill="${joint}"/>
+      <circle cx="74" cy="148" r="6" fill="url(#${key}-metal)"/>
+      <path d="M68 150 82 154 76 176 60 172Z" fill="${shade}"/>
+      <circle cx="68" cy="176" r="5.5" fill="${joint}"/>
+      <path d="M62 178 76 182 70 202 54 198Z" fill="${shade}"/>
+      <path d="M52 200 72 204 74 210 48 206Z" fill="${joint}"/>
+      <path d="M68 104h74c14 0 20 9 20 22v16c0 14-8 22-20 22H72c-16 0-24-8-24-22v-16c0-13 8-22 20-22Z" fill="url(#${key}-shell)"/>
+      <path d="M92 104h28c2 8 2 8 0 14H92c-2-6-2-6 0-14Z" fill="${joint}" opacity=".55"/>
+      <path d="M78 126h62M80 134h46" stroke="${shade}" fill="none"/>
+      <path d="M64 110c-20 0-32 12-30 28 2 14 16 20 32 16l12-10V118c0-6-4-8-14-8Z" fill="url(#${key}-shell)"/>
+      <path d="M40 122h24v11H42c-5 0-7-5-2-9Z" fill="${joint}"/>
+      <circle cx="47" cy="127" r="1.7" fill="${accent}"/>
+      <circle cx="124" cy="156" r="8" fill="url(#${key}-metal)"/>
+      <path d="M116 158 136 162 130 186 108 182Z" fill="url(#${key}-shell)"/>
+      <circle cx="118" cy="186" r="7" fill="${joint}"/>
+      <path d="M110 188 130 192 124 210 102 206Z" fill="url(#${key}-shell)"/>
+      <path d="M98 208 126 212 128 218 94 214Z" fill="${joint}"/>
+      <circle cx="84" cy="158" r="8" fill="url(#${key}-metal)"/>
+      <path d="M76 160 96 164 90 188 68 184Z" fill="url(#${key}-shell)"/>
+      <circle cx="78" cy="188" r="7" fill="${joint}"/>
+      <path d="M70 190 90 194 84 212 62 208Z" fill="url(#${key}-shell)"/>
+      <path d="M58 210 86 214 88 220 54 216Z" fill="${joint}"/>
+      <path d="M108 92h30v14h-30Z" fill="url(#${key}-metal)"/>
+      <circle cx="122" cy="92" r="8" fill="${joint}"/>
+      <path d="M116 86 132 80 156 52 142 44Z" fill="url(#${key}-shell)"/>
+      <circle cx="150" cy="50" r="7" fill="url(#${key}-metal)"/>
+      <path d="M148 44 162 40 180 22 166 16Z" fill="url(#${key}-shell)"/>
+      <circle cx="174" cy="22" r="6" fill="${joint}"/>
+      <path d="M168 18 164 6h6l6 12Z" fill="${joint}"/>
+      <path d="M178 20 186 6h6l-2 16Z" fill="${joint}"/>
+      <path d="M166 16h24" stroke="${accent}" stroke-width="2" fill="none"/>
+    </g>
+    <path d="M22 64h10m-5-5v10M168 176h8m-4-4v8" stroke="${accent}" stroke-width=".7" opacity=".7"/>
+  </svg>`;
+}
+
 function robotIllustration(id, instance) {
   const key = `${instance}-${id}`;
   const palettes = {
     g1: ["#efede6", "#bcbab2", "#40464a", "#d5b59a"],
-    h1: ["#565b58", "#303632", "#272c2b", "#abb49e"],
+    b2: ["#6e736f", "#454b47", "#2e3331", "#c9b08a"],
     h2: ["#eeefeb", "#bdc2c0", "#444c51", "#acb8bd"],
     r1: ["#e8e7df", "#a9aaa1", "#3f4747", "#c7b68e"],
   };
   const [light, shade, joint, accent] = palettes[id];
-  const tall = id === "h1";
+  if (id === "b2") return b2Illustration(key, light, shade, joint, accent);
   const short = id === "r1";
   const head = id === "h2"
     ? `<path d="M83 23Q100 13 117 23L115 47Q100 59 85 47Z" fill="url(#${key}-shell)"/><path d="M87 29Q100 23 113 29L111 39Q100 44 89 39Z" fill="${joint}"/><path d="M94 32h12" stroke="#a7b9ba" stroke-width="2"/>`
-    : tall
-      ? `<rect x="88" y="18" width="24" height="24" rx="5" fill="${joint}"/><path d="M90 21h20v9H90Z" fill="#77817c"/><circle cx="95" cy="25" r="2" fill="#b7c4b5"/><path d="M94 35h12" stroke="#969e91" stroke-width="2"/>`
-      : `<rect x="${short ? 80 : 82}" y="21" width="${short ? 40 : 36}" height="30" rx="${short ? 9 : 13}" fill="url(#${key}-shell)"/><path d="M86 28Q100 23 114 28V38Q100 44 86 38Z" fill="${joint}"/><path d="M91 32h18" stroke="${accent}" stroke-width="2" opacity=".8"/>`;
+    : `<rect x="${short ? 80 : 82}" y="21" width="${short ? 40 : 36}" height="30" rx="${short ? 9 : 13}" fill="url(#${key}-shell)"/><path d="M86 28Q100 23 114 28V38Q100 44 86 38Z" fill="${joint}"/><path d="M91 32h18" stroke="${accent}" stroke-width="2" opacity=".8"/>`;
   return `<svg viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <defs>
       <linearGradient id="${key}-shell" x1="0" x2="1" y1="0" y2=".6"><stop stop-color="${light}"/><stop offset=".6" stop-color="${light}"/><stop offset="1" stop-color="${shade}"/></linearGradient>
@@ -53,11 +99,11 @@ function robotIllustration(id, instance) {
     </defs>
     <ellipse cx="103" cy="205" rx="47" ry="7" fill="#776d5c" opacity=".09"/>
     <g stroke="#625f55" stroke-width=".65" stroke-linejoin="round">
-      <g transform="${short ? "translate(0 16) scale(1 .91)" : tall ? "translate(0 -1)" : "translate(0 3)"}">
+      <g transform="${short ? "translate(0 16) scale(1 .91)" : "translate(0 3)"}">
         <path d="M94 43h12v15H94Z" fill="url(#${key}-metal)"/>
         ${head}
-        <path d="${tall ? "M77 51 123 51 120 99 80 99Z" : "M76 54Q100 45 124 54L118 99Q100 107 82 99Z"}" fill="url(#${key}-shell)"/>
-        <path d="M87 59Q100 55 113 59L111 73H89Z" fill="${joint}" opacity="${tall ? ".9" : ".85"}"/>
+        <path d="M76 54Q100 45 124 54L118 99Q100 107 82 99Z" fill="url(#${key}-shell)"/>
+        <path d="M87 59Q100 55 113 59L111 73H89Z" fill="${joint}" opacity=".85"/>
         <path d="M94 63h12" stroke="${accent}" stroke-width="2" stroke-linecap="round"/>
         <path d="M88 83h24M89 88h22" stroke="${shade}" fill="none"/>
         <circle cx="73" cy="61" r="11" fill="url(#${key}-metal)"/>
@@ -94,7 +140,6 @@ function robotIllustration(id, instance) {
 const grid = document.querySelector("#robot-grid");
 const search = document.querySelector("#search");
 const robotDialog = document.querySelector("#robot-dialog");
-const guideDialog = document.querySelector("#guide-dialog");
 const modelSelect = document.querySelector("#model-select");
 let activeRobot = null;
 let toastTimeout;
@@ -118,11 +163,8 @@ function renderRobots() {
     return `<article class="robot-card${selected ? " selected" : ""}" style="--robot-accent:${robot.accent};--robot-tint:${robot.tint}">
       <div class="card-main">
         <div class="card-text">
-          <div class="card-eyebrow">UNITREE ROBOTICS</div>
           <h3>${robot.name}</h3>
           <p class="card-subtitle">${robot.subtitle}</p>
-          <p class="card-description">${robot.description}</p>
-          <div class="card-tags">${robot.tags.map((tag) => `<span>${tag}</span>`).join("")}</div>
         </div>
         <div class="robot-art">${robotIllustration(robot.id, "card")}</div>
       </div>
@@ -136,31 +178,9 @@ function renderRobots() {
   document.querySelector("#empty-state").hidden = visible.length > 0;
 }
 
-function renderHistory() {
-  const container = document.querySelector("#recent-list");
-  container.replaceChildren();
-  if (!history.length) {
-    const empty = document.createElement("p");
-    empty.className = "recent-empty";
-    empty.textContent = "你的选择会出现在这里";
-    container.append(empty);
-    return;
-  }
-  for (const entry of history) {
-    const robot = robots.find((item) => item.id === entry.id);
-    const button = document.createElement("button");
-    button.className = "recent-item";
-    button.dataset.robot = robot.id;
-    // Model values are validated against the fixed catalog before rendering.
-    button.innerHTML = `<span class="recent-dot"></span>${robot.name}<small>${entry.model}</small>`;
-    container.append(button);
-  }
-}
-
 function openRobot(id) {
   activeRobot = robots.find((robot) => robot.id === id);
   if (!activeRobot) return;
-  closeSidebar();
   document.querySelector("#dialog-title").textContent = `${activeRobot.name} 遥操工作空间`;
   document.querySelector("#dialog-description").textContent = activeRobot.subtitle;
   document.querySelector("#dialog-robot").innerHTML = robotIllustration(id, "dialog");
@@ -178,20 +198,6 @@ function showToast(message) {
   toastTimeout = setTimeout(() => toast.classList.remove("visible"), 3500);
 }
 
-function closeSidebar() {
-  document.body.classList.remove("nav-open");
-  document.querySelector("#sidebar-backdrop").hidden = true;
-  document.querySelector("#menu-toggle").setAttribute("aria-expanded", "false");
-  syncSidebarAccessibility();
-}
-
-const mobileLayout = window.matchMedia("(max-width: 850px)");
-function syncSidebarAccessibility() {
-  document.querySelector("#sidebar").inert = mobileLayout.matches && !document.body.classList.contains("nav-open");
-}
-mobileLayout.addEventListener("change", closeSidebar);
-syncSidebarAccessibility();
-
 document.addEventListener("click", (event) => {
   const entry = event.target.closest("[data-robot]");
   if (entry) openRobot(entry.dataset.robot);
@@ -206,10 +212,9 @@ document.querySelector("#confirm-selection").addEventListener("click", () => {
   try { localStorage.setItem("xr-robot-history", JSON.stringify(history)); } catch { /* Selection remains available for this session. */ }
   robotDialog.close();
   renderRobots();
-  renderHistory();
   const returnTarget = document.querySelector(`.entry-button[data-robot="${id}"]`) || search;
   returnTarget.focus({ preventScroll: true });
-  showToast(`已选择 ${history[0].model} · 当前为入口预览`);
+  showToast(`已选择 ${history[0].model}`);
 });
 
 search.addEventListener("input", renderRobots);
@@ -218,37 +223,12 @@ document.querySelector("#clear-search").addEventListener("click", () => {
   renderRobots();
   search.focus();
 });
-for (const selector of ["#nav-guide", "#open-guide"]) {
-  document.querySelector(selector).addEventListener("click", () => {
-    closeSidebar();
-    guideDialog.showModal();
-  });
-}
-document.querySelector("#nav-robots").addEventListener("click", () => {
-  closeSidebar();
-  search.value = "";
-  renderRobots();
-  document.querySelector("#robots-title").scrollIntoView({ behavior: "smooth", block: "start" });
-});
-document.querySelector("#menu-toggle").addEventListener("click", () => {
-  const open = document.body.classList.toggle("nav-open");
-  document.querySelector("#sidebar-backdrop").hidden = !open;
-  document.querySelector("#menu-toggle").setAttribute("aria-expanded", String(open));
-  syncSidebarAccessibility();
-  if (open) document.querySelector("#nav-robots").focus();
-});
-document.querySelector("#sidebar-backdrop").addEventListener("click", closeSidebar);
 document.addEventListener("keydown", (event) => {
   if (event.key === "/" && !event.ctrlKey && !event.metaKey && !event.altKey &&
       !["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName) &&
       !document.querySelector("dialog[open]")) {
     event.preventDefault();
-    closeSidebar();
     search.focus();
-  }
-  if (event.key === "Escape" && document.body.classList.contains("nav-open")) {
-    closeSidebar();
-    document.querySelector("#menu-toggle").focus();
   }
 });
 for (const dialog of document.querySelectorAll("dialog")) {
@@ -259,4 +239,3 @@ for (const dialog of document.querySelectorAll("dialog")) {
   });
 }
 renderRobots();
-renderHistory();
