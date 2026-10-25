@@ -4,26 +4,14 @@ const robots = [
   {
     id: "g1", name: "G1", subtitle: "小巧身形，自由表达",
     description: "将每一个细微动作，转化为灵巧而自然的回应。",
-    tags: ["全身遥操", "灵巧手"], accent: "#b8886a", tint: "#f3ede1",
-    variants: [{ value: "G1_29", label: "G1 · 29 自由度" }, { value: "G1_23", label: "G1 · 23 自由度" }],
+    tags: ["全身遥操", "灵巧手"], tint: "#f3ede1",
+    model: "G1",
   },
   {
     id: "b2", name: "B2 + Z1", subtitle: "四足机动，Z1 机械臂",
     description: "在四足平台上延伸机械臂，把动作带到更远的位置。",
-    tags: ["四足遥操", "机械臂"], accent: "#8a977c", tint: "#e7ebe3",
-    variants: [{ value: "B2_Z1", label: "B2 · Z1 机械臂" }],
-  },
-  {
-    id: "h2", name: "H2", subtitle: "从容协作，感知更多",
-    description: "让人与机器的协作，在每一次动作中自然发生。",
-    tags: ["全身遥操", "人形机器人"], accent: "#8a94a5", tint: "#eaeef0",
-    variants: [{ value: "H2", label: "H2 · 标准型号" }],
-  },
-  {
-    id: "r1", name: "R1", subtitle: "轻盈起步，释放可能",
-    description: "从一个简单的动作开始，探索属于你的新可能。",
-    tags: ["双臂遥操", "多型号"], accent: "#b5a077", tint: "#f3efe3",
-    variants: [{ value: "R1_A5", label: "R1 A5 · 手臂 5 自由度" }, { value: "R1_A7", label: "R1 A7 · 手臂 7 自由度" }],
+    tags: ["四足遥操", "机械臂"], tint: "#e7ebe3",
+    model: "B2_Z1",
   },
 ];
 
@@ -138,9 +126,7 @@ function robotIllustration(id, instance) {
 }
 
 const grid = document.querySelector("#robot-grid");
-const search = document.querySelector("#search");
 const robotDialog = document.querySelector("#robot-dialog");
-const modelSelect = document.querySelector("#model-select");
 let activeRobot = null;
 let toastTimeout;
 let history = [];
@@ -148,19 +134,19 @@ try {
   const saved = JSON.parse(localStorage.getItem("xr-robot-history") || "[]");
   if (Array.isArray(saved)) {
     history = saved.filter((entry) => entry && robots.some((robot) =>
-      robot.id === entry.id && robot.variants.some((variant) => variant.value === entry.model)
+      robot.id === entry.id
     )).filter((entry, index, entries) => entries.findIndex((item) => item.id === entry.id) === index).slice(0, 4);
   }
 } catch { /* The page also works with browser storage disabled. */ }
 
+function modelLabel(entry) {
+  return robots.find((robot) => robot.id === entry.id)?.name ?? entry.id;
+}
+
 function renderRobots() {
-  const query = search.value.trim().toLowerCase();
-  const visible = robots.filter((robot) =>
-    `${robot.name} ${robot.subtitle} ${robot.tags.join(" ")} ${robot.variants.map((variant) => `${variant.value} ${variant.label}`).join(" ")}`.toLowerCase().includes(query)
-  );
-  grid.innerHTML = visible.map((robot) => {
+  grid.innerHTML = robots.map((robot) => {
     const selected = history[0]?.id === robot.id;
-    return `<article class="robot-card${selected ? " selected" : ""}" style="--robot-accent:${robot.accent};--robot-tint:${robot.tint}">
+    return `<article class="robot-card${selected ? " selected" : ""}" style="--robot-tint:${robot.tint}">
       <div class="card-main">
         <div class="card-text">
           <h3>${robot.name}</h3>
@@ -169,13 +155,12 @@ function renderRobots() {
         <div class="robot-art">${robotIllustration(robot.id, "card")}</div>
       </div>
       <div class="card-footer">
-        <span class="model-count">${icon(selected ? "check" : "cube")}${selected ? `已选择 ${history[0].model}` : `${String(robot.variants.length).padStart(2, "0")} 个可选型号`}</span>
+        <span class="model-count">${icon(selected ? "check" : "cube")}${selected ? `已选择 ${modelLabel(history[0])}` : "遥操工作空间"}</span>
         <button class="entry-button" data-robot="${robot.id}" aria-label="进入 ${robot.name} 遥操">进入遥操${icon("arrow")}</button>
       </div>
     </article>`;
   }).join("");
-  document.querySelector("#result-count").textContent = String(visible.length).padStart(2, "0");
-  document.querySelector("#empty-state").hidden = visible.length > 0;
+  document.querySelector("#result-count").textContent = String(robots.length).padStart(2, "0");
 }
 
 function openRobot(id) {
@@ -184,9 +169,6 @@ function openRobot(id) {
   document.querySelector("#dialog-title").textContent = `${activeRobot.name} 遥操工作空间`;
   document.querySelector("#dialog-description").textContent = activeRobot.subtitle;
   document.querySelector("#dialog-robot").innerHTML = robotIllustration(id, "dialog");
-  modelSelect.replaceChildren(...activeRobot.variants.map((variant) => new Option(variant.label, variant.value)));
-  const previous = history.find((entry) => entry.id === id);
-  if (previous) modelSelect.value = previous.model;
   robotDialog.showModal();
 }
 
@@ -208,29 +190,14 @@ document.addEventListener("click", (event) => {
 document.querySelector("#confirm-selection").addEventListener("click", () => {
   if (!activeRobot) return;
   const id = activeRobot.id;
-  history = [{ id, model: modelSelect.value }, ...history.filter((entry) => entry.id !== id)].slice(0, 4);
+  history = [{ id, model: activeRobot.model }, ...history.filter((entry) => entry.id !== id)].slice(0, 4);
   try { localStorage.setItem("xr-robot-history", JSON.stringify(history)); } catch { /* Selection remains available for this session. */ }
   robotDialog.close();
   renderRobots();
-  const returnTarget = document.querySelector(`.entry-button[data-robot="${id}"]`) || search;
-  returnTarget.focus({ preventScroll: true });
-  showToast(`已选择 ${history[0].model}`);
+  document.querySelector(`.entry-button[data-robot="${id}"]`)?.focus({ preventScroll: true });
+  showToast(`已选择 ${modelLabel(history[0])}`);
 });
 
-search.addEventListener("input", renderRobots);
-document.querySelector("#clear-search").addEventListener("click", () => {
-  search.value = "";
-  renderRobots();
-  search.focus();
-});
-document.addEventListener("keydown", (event) => {
-  if (event.key === "/" && !event.ctrlKey && !event.metaKey && !event.altKey &&
-      !["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName) &&
-      !document.querySelector("dialog[open]")) {
-    event.preventDefault();
-    search.focus();
-  }
-});
 for (const dialog of document.querySelectorAll("dialog")) {
   dialog.addEventListener("click", (event) => {
     const rect = dialog.getBoundingClientRect();
