@@ -128,6 +128,7 @@ function robotIllustration(id, instance) {
 const grid = document.querySelector("#robot-grid");
 const robotDialog = document.querySelector("#robot-dialog");
 let activeRobot = null;
+let launchingB2 = false;
 let toastTimeout;
 let history = [];
 try {
@@ -164,12 +165,51 @@ function renderRobots() {
 }
 
 function openRobot(id) {
+  if (id === "b2") {
+    launchB2Z1();
+    return;
+  }
   activeRobot = robots.find((robot) => robot.id === id);
   if (!activeRobot) return;
   document.querySelector("#dialog-title").textContent = `${activeRobot.name} 遥操工作空间`;
   document.querySelector("#dialog-description").textContent = activeRobot.subtitle;
   document.querySelector("#dialog-robot").innerHTML = robotIllustration(id, "dialog");
   robotDialog.showModal();
+}
+
+async function launchB2Z1() {
+  if (launchingB2) return;
+  if (location.protocol !== "http:" || !["127.0.0.1", "localhost"].includes(location.hostname)) {
+    showToast("请运行 python3 server.py，并从本地服务地址打开页面。");
+    return;
+  }
+  launchingB2 = true;
+  const button = document.querySelector('.entry-button[data-robot="b2"]');
+  button.disabled = true;
+  button.textContent = "正在启动…";
+  try {
+    const response = await fetch("/api/launch/b2z1", {
+      method: "POST",
+      headers: { "X-Teleop-Launch": "1" },
+    });
+    if (!response.headers.get("content-type")?.includes("application/json")) {
+      throw new Error("启动接口不可用，请改用 python3 server.py 启动页面。");
+    }
+    const result = await response.json();
+    if (!response.ok || !result.ok) throw new Error(result.message || "启动失败，请检查本地服务。");
+    const robot = robots.find((entry) => entry.id === "b2");
+    history = [{ id: robot.id, model: robot.model }, ...history.filter((entry) => entry.id !== robot.id)].slice(0, 4);
+    try { localStorage.setItem("xr-robot-history", JSON.stringify(history)); } catch { /* Storage is optional. */ }
+    renderRobots();
+    document.querySelector('.entry-button[data-robot="b2"]')?.focus({ preventScroll: true });
+    showToast(result.message);
+  } catch (error) {
+    showToast(error instanceof TypeError ? "无法连接本地启动服务，请检查 python3 server.py 是否运行。" : error.message);
+  } finally {
+    launchingB2 = false;
+    button.disabled = false;
+    button.innerHTML = `进入遥操${icon("arrow")}`;
+  }
 }
 
 function showToast(message) {
